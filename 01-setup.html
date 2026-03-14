@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
-<head>
+<html lang="ko"><head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Part 1: 설치 가이드 — Claude Code 워크샵</title>
@@ -21,7 +20,7 @@
     </ul>
     <div class="nav-spacer"></div>
     <span class="nav-badge">0:00 – 0:40</span>
-  </nav>
+  <button id="edit-btn" style="padding: 5px 12px; background: transparent; color: var(--text-2); border: 1px solid var(--border); border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; margin-left: 8px;">✏️ 편집</button><button id="reset-btn" style="padding: 5px 10px; background: transparent; color: rgb(220, 38, 38); border: 1px solid rgb(254, 202, 202); border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; margin-left: 4px; display: none;">↺ 초기화</button><button id="save-file-btn" style="padding: 5px 12px; background: rgb(22, 101, 52); color: white; border: none; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer; margin-left: 4px;">💾 파일 저장</button></nav>
 </header>
 
 <div class="page-hero">
@@ -156,7 +155,7 @@
       <div class="code-block">
         <div class="code-label">Terminal</div>
         <button class="copy-btn" onclick="copyCode(this)">복사</button>
-        <pre>echo 'export PATH="$HOME/.claude/bin:$PATH"' >> ~/.zshrc
+        <pre>echo 'export PATH="$HOME/.claude/bin:$PATH"' &gt;&gt; ~/.zshrc
 source ~/.zshrc</pre>
       </div>
 
@@ -368,5 +367,6 @@ function copyCode(btn) {
 }
 </script>
 <script src="./edit.js"></script>
-</body>
-</html>
+
+
+</body><whale-quicksearch translate="no" style="visibility: visible;"></whale-quicksearch></html>

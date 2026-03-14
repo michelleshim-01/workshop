@@ -1,4 +1,5 @@
 (function () {
+  const IS_LOCAL = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
   let editMode = false;
   const storageKey = 'workshop-edit:' + window.location.pathname;
 
@@ -38,6 +39,21 @@
 
     nav.appendChild(editBtn);
     nav.appendChild(resetBtn);
+
+    // 로컬 서버일 때만 "파일 저장" 버튼 추가
+    if (IS_LOCAL) {
+      const saveFileBtn = Object.assign(document.createElement('button'), {
+        id: 'save-file-btn',
+        textContent: '💾 파일 저장'
+      });
+      Object.assign(saveFileBtn.style, {
+        padding: '5px 12px', background: '#166534', color: 'white',
+        border: 'none', borderRadius: '6px', fontSize: '12px',
+        fontWeight: '600', cursor: 'pointer', marginLeft: '4px'
+      });
+      saveFileBtn.onclick = saveToFile;
+      nav.appendChild(saveFileBtn);
+    }
   }
 
   function styleBtn(btn, active) {
@@ -72,7 +88,6 @@
 
   function enableEditing() {
     document.querySelectorAll(SELECTOR).forEach(el => {
-      // .page-nav 안의 요소는 건너뜀
       if (el.closest('.page-nav')) return;
       el.contentEditable = 'true';
       el.dataset.editActive = '1';
@@ -90,7 +105,7 @@
     });
   }
 
-  /* ── 저장 / 불러오기 / 초기화 ── */
+  /* ── localStorage 저장 / 불러오기 / 초기화 ── */
   let saveTimer;
   function scheduleSave() {
     clearTimeout(saveTimer);
@@ -116,8 +131,7 @@
       if (main && data.main) main.innerHTML = data.main;
       const hero = document.querySelector('.hero-section, .page-hero');
       if (hero && data.hero) hero.innerHTML = data.hero;
-    } catch (e) {
-      // 이전 포맷(단순 문자열) 호환
+    } catch {
       const main = document.querySelector('.main-content');
       if (main) main.innerHTML = raw;
     }
@@ -130,7 +144,39 @@
     }
   }
 
-  /* ── 입력 시 자동 저장 ── */
+  /* ── 파일로 저장 (로컬 서버 전용) ── */
+  async function saveToFile() {
+    const fileName = location.pathname.replace(/^\//, '') || 'index.html';
+
+    // DevTools 편집 포함 전체 HTML 가져오기
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+
+    try {
+      const res = await fetch('/__save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ file: fileName, html })
+      });
+      if (res.ok) {
+        toast('📁 파일 저장 완료: ' + fileName);
+      } else {
+        toast('❌ 저장 실패');
+      }
+    } catch {
+      toast('❌ 서버에 연결할 수 없습니다');
+    }
+  }
+
+  /* ── Cmd+S / Ctrl+S 단축키 (로컬에서 파일 저장) ── */
+  document.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+      e.preventDefault();
+      if (IS_LOCAL) saveToFile();
+      else saveContent();
+    }
+  });
+
+  /* ── 인라인 편집 시 자동 저장 ── */
   document.addEventListener('input', e => {
     if (e.target.contentEditable === 'true') scheduleSave();
   });
