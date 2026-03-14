@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:m1zz.github.io)",
+      "WebFetch(domain:second-team.com)",
+      "WebFetch(domain:hkg-workshop.vercel.app)",
+      "Bash(open \"/Users/michelle_phone/Desktop/클로드코드 워크샵/index.html\")"
+    ]
+  }
+}

@@ -39,9 +39,11 @@ const server = http.createServer((req, res) => {
   }
 
   // ── 정적 파일 서빙 ──
-  let urlPath = req.url.split('?')[0];
+  let urlPath = decodeURIComponent(req.url.split('?')[0]);
   if (urlPath === '/') urlPath = '/index.html';
   const filePath = path.join(DIR, urlPath);
+  // 보안: 워크샵 폴더 밖으로 나가지 못하게
+  if (!filePath.startsWith(DIR)) { res.writeHead(403); res.end('Forbidden'); return; }
   const ext = path.extname(filePath);
 
   try {
