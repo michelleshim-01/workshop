@@ -8,7 +8,8 @@
     '.main-content p', '.main-content li',
     '.main-content td', '.main-content th',
     '.main-content pre',
-    '.page-hero h1', '.page-hero p'
+    '.page-hero h1', '.page-hero p',
+    '.hero-section h1', '.hero-section p'
   ].join(', ');
 
   /* ── 헤더에 버튼 삽입 ── */
@@ -97,18 +98,29 @@
   }
 
   function saveContent() {
+    const data = {};
     const main = document.querySelector('.main-content');
-    if (main) {
-      localStorage.setItem(storageKey, main.innerHTML);
-      toast('저장됨 ✓');
-    }
+    if (main) data.main = main.innerHTML;
+    const hero = document.querySelector('.hero-section, .page-hero');
+    if (hero) data.hero = hero.innerHTML;
+    localStorage.setItem(storageKey, JSON.stringify(data));
+    toast('저장됨 ✓');
   }
 
   function loadContent() {
-    const saved = localStorage.getItem(storageKey);
-    if (!saved) return;
-    const main = document.querySelector('.main-content');
-    if (main) main.innerHTML = saved;
+    const raw = localStorage.getItem(storageKey);
+    if (!raw) return;
+    try {
+      const data = JSON.parse(raw);
+      const main = document.querySelector('.main-content');
+      if (main && data.main) main.innerHTML = data.main;
+      const hero = document.querySelector('.hero-section, .page-hero');
+      if (hero && data.hero) hero.innerHTML = data.hero;
+    } catch (e) {
+      // 이전 포맷(단순 문자열) 호환
+      const main = document.querySelector('.main-content');
+      if (main) main.innerHTML = raw;
+    }
   }
 
   function resetContent() {
